@@ -18,7 +18,7 @@ function App() {
 			let url: string = getPeopleUrl + "?page=" + page + "&size=10";
 			
 			if (name) {
-				url = url + "?name=" + name;
+				url = url + "&name=" + name;
 			}
 			
 			await fetch(url,
@@ -36,7 +36,12 @@ function App() {
 					console.dir(response);
 				}
 				
-				return response.json();
+				if (response.status === 200) {
+					return response.json();
+				} else {
+					setPeople([]);
+					setTotalPages(1);
+				}
 				
 			}).then((result: any) => {
 				
@@ -44,8 +49,10 @@ function App() {
 					console.dir(result);
 				}
 				
-				setPeople(result.content);
-				setTotalPages(result.totalPages);
+				if (result) {
+					setPeople(result.content);
+					setTotalPages(result.totalPages);
+				}
 				
 			}).catch((error) => {
 				console.error(error);
@@ -57,7 +64,7 @@ function App() {
 		return () => {
 			setPeople([]);
 		}
-	}, [searchInput]);
+	}, [searchInput, pageNr]);
 	
 	
 	return (
@@ -83,10 +90,15 @@ function App() {
 					{
 						people?.map((person: Person) => {
 							return (
-								<div>
+								<div key={person.id} className={"itemContainer"}>
+									
+									<img src={person.photoUrl} />
+									
+									<span>
 									{
 										person.fullName
 									}
+									</span>
 								</div>
 							);
 						})
@@ -97,20 +109,26 @@ function App() {
 					
 					{
 						pageNr > 0 &&
-						<button id={"prev"}>
+						<button
+							id={"prev"}
+							onClick={() => setPageNr(pageNr -1)}
+						>
 							Prev
 						</button>
 					}
 					
 					<span>
 						{
-							"Page " + (pageNr + 1) + " of " + totalPages
+							"Page " + (pageNr + 1) + " of " + (totalPages === 0 ? (totalPages + 1) : totalPages)
 						}
 					</span>
 					
 					{
-						totalPages > 1 &&
-						<button id={"next"}>
+						((totalPages > 1) && ((pageNr + 1) < totalPages)) &&
+						<button
+							id={"next"}
+							onClick={() => setPageNr(pageNr + 1)}
+						>
 							Next
 						</button>
 					}
