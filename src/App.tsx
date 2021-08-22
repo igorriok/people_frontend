@@ -6,7 +6,8 @@ function App() {
 	
 	const [people, setPeople] = useState<Person[]>([]);
 	const [searchInput, setSearchInput] = useState<string>("");
-	const [pageNr, setPageNr] = useState<number>(1);
+	const [pageNr, setPageNr] = useState<number>(0);
+	const [totalPages, setTotalPages] = useState<number>(1);
 	const getPeopleUrl = "http://localhost:8080/getpeople";
 	
 	
@@ -44,6 +45,7 @@ function App() {
 				}
 				
 				setPeople(result.content);
+				setTotalPages(result.totalPages);
 				
 			}).catch((error) => {
 				console.error(error);
@@ -89,6 +91,30 @@ function App() {
 							);
 						})
 					}
+				</div>
+				
+				<div className={"navigationContainer"}>
+					
+					{
+						pageNr > 0 &&
+						<button id={"prev"}>
+							Prev
+						</button>
+					}
+					
+					<span>
+						{
+							"Page " + (pageNr + 1) + " of " + totalPages
+						}
+					</span>
+					
+					{
+						totalPages > 1 &&
+						<button id={"next"}>
+							Next
+						</button>
+					}
+					
 				</div>
 			
 			</header>
