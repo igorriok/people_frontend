@@ -15,7 +15,7 @@ function App() {
 		
 		async function getPeople(name: string, page?: number) {
 			
-			let url: string = getPeopleUrl + "?page=" + page + "&size=10";
+			let url: string = getPeopleUrl + "?page=" + page + "&size=5";
 			
 			if (name) {
 				url = url + "&name=" + name;
@@ -66,6 +66,12 @@ function App() {
 		}
 	}, [searchInput, pageNr]);
 	
+	const onSearchValueChange = (value: string) => {
+		
+		setSearchInput(value);
+		setPageNr(0);
+	}
+	
 	
 	return (
 		<div className="App">
@@ -80,29 +86,8 @@ function App() {
 						type="text"
 						id="fname"
 						value={searchInput}
-						onChange={(event) => setSearchInput(event.target.value)}
+						onChange={(event) => onSearchValueChange(event.target.value)}
 					/>
-				</div>
-				
-				<div
-					className={"listContainer"}
-				>
-					{
-						people?.map((person: Person) => {
-							return (
-								<div key={person.id} className={"itemContainer"}>
-									
-									<img src={person.photoUrl} />
-									
-									<span>
-									{
-										person.fullName
-									}
-									</span>
-								</div>
-							);
-						})
-					}
 				</div>
 				
 				<div className={"navigationContainer"}>
@@ -132,10 +117,35 @@ function App() {
 							Next
 						</button>
 					}
-					
+				
 				</div>
 			
 			</header>
+				
+			<div
+				className={"list-container"}
+			>
+				{
+					people?.map((person: Person) => {
+						return (
+							<div
+								key={person.id}
+								className={"item-container"}
+							>
+								
+								<img src={person.photoUrl} />
+								
+								<span>
+								{
+									person.fullName
+								}
+								</span>
+							</div>
+						);
+					})
+				}
+			</div>
+			
 		</div>
 	);
 }
